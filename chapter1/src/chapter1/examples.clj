@@ -1,10 +1,11 @@
 (ns chapter1.examples
   (:require [chapter1.data :refer :all]
+            [incanter.core :as i]
   )
 )
 
-(defn dummy
-  []
-  (println "I'm ", (dummy_data))
+(defn view-data
+  [data]
+  (i/view data)
 )
 

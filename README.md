@@ -18,5 +18,7 @@ The pdf of the book can be downloaded here: https://greenteapress.com/wp/think-s
    * `cd chapter1`
    * `lein run` for running all examples
    * for running only some examples use `lein repl`, and now
-       - `(ex-1-xx)` to run an example
+       - `(<Example_X>)` to run an example x, which doesn't need input
+       - use `(def preg_data (read-dat-file))` to load the data
+       - `(<Example_Y> preg_data)` to run an example y, which needs the input
        - `(use 'chapter1.examples :reload)` to reload examples.clj

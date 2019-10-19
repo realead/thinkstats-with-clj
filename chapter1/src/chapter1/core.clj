@@ -5,10 +5,13 @@
   (:gen-class)
 )
 
-
-
 (def examples [
-                       dummy 
+                   
+              ]
+)
+
+(def examples-with-data [
+                       view-data
               ]
 )
 
@@ -20,6 +23,15 @@
       (-> (f)
           (pr-str)
           (println)
+      )
+  )
+
+  (let [data (read-dat-file)]
+      (doseq  [f examples-with-data] 
+          (-> (f data)
+              (pr-str)
+              (println)
+          )
       )
   )
 )

@@ -18,6 +18,7 @@
 (def type2parser
    {"byte" #(Integer/parseInt %)
     "int"  #(Integer/parseInt %)
+    "str12"  #(Long/parseLong %);
     "float" #(Double/parseDouble %)
     "double" #(Double/parseDouble %)
    }

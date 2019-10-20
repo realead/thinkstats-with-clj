@@ -36,3 +36,10 @@
   )
 )
 
+(defn caseid-10229
+  [data]
+  (->> data
+       (i/$where {:caseid 10229})
+       (i/$ :outcome)
+  )
+)

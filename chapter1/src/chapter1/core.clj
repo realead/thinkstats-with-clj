@@ -11,11 +11,12 @@
 )
 
 (def examples-with-data [
-                       view-data
-                       check-outcome
-                       check-weight
-                       check-weight2
-              ]
+               view-data
+               check-outcome
+               check-weight
+               check-weight2
+               caseid-10229
+            ]
 )
 
 

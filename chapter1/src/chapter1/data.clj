@@ -98,7 +98,7 @@
    [dataset]
    (-> dataset
        (i/transform-col :agepreg #(if (some? %) (/ % 100.0) Double/NaN))
-       (i/transform-col :birthwgt_lb #(if (contains? #{97 98 99 nil} %) Double/NaN %))
+       (i/transform-col :birthwgt_lb #(if (contains? #{97 98 99 51 nil} %) Double/NaN %))
        (i/transform-col :birthwgt_oz #(if (contains? #{97 98 99 nil} %) Double/NaN %))
    )
 )
@@ -116,4 +116,13 @@
    (prepare-dataset (read-dat-file-filtered))
 )
 
+
+(defn select-filtered
+   [col-name dataset]
+   (->> dataset
+        (i/$where {col-name {:$fn #(Double/isFinite %)}}) 
+        (i/$ col-name)
+   )
+)
+   
 

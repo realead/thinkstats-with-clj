@@ -9,3 +9,30 @@
   (i/view data)
 )
 
+(defn check-outcome
+  [data]
+  (->> data
+       (i/$ :outcome)
+       (frequencies)
+       (into (sorted-map))
+  )
+)
+
+(defn check-weight
+  [data]
+  (->> data
+       (select-filtered :birthwgt_lb)
+       (frequencies)
+       (into (sorted-map))
+  )
+)
+
+
+(defn check-weight2
+  [data]
+  (->> data
+       (select-filtered :birthwgt_lb)
+       (every? #(< % 21))
+  )
+)
+

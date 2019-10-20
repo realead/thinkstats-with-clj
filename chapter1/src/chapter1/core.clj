@@ -12,6 +12,9 @@
 
 (def examples-with-data [
                        view-data
+                       check-outcome
+                       check-weight
+                       check-weight2
               ]
 )
 

@@ -26,7 +26,7 @@
       )
   )
 
-  (let [data (read-dat-file)]
+  (let [data (load-clean-dataset)]
       (doseq  [f examples-with-data] 
           (-> (f data)
               (pr-str)

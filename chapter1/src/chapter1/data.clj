@@ -32,7 +32,7 @@
         wlength (nth words 4)
         length  (Integer/parseInt (subs wlength 1 (dec (count wlength))))]
      {:typeparser (get type2parser type str)
-      :name (nth words 3)
+      :name (keyword (nth words 3))
       :start (dec start) ;start 1-base
       :end (+ (dec start) length) ;start 1-based
      } 
@@ -79,4 +79,41 @@
        (i/dataset (map :name parser) (map #(parse-dat-line % parser) data))
   )    
 )
+
+(defn read-dat-file-filtered
+  ([] (read-dat-file-filtered #{:caseid :prglngth :outcome 
+                                :pregordr :birthord :birthwgt_lb
+                                :birthwgt_oz :agepreg :finalwgt})
+  )
+  ([features]
+    (let [parser (create-dat-line-parser-from-dct)
+          filtered_parser (filter #(contains? features (:name %)) parser)
+        data (open-dat-file)]
+       (i/dataset (map #(:name %) filtered_parser) (map #(parse-dat-line % filtered_parser) data))
+    )
+  )    
+)
+
+(defn clean-dataset
+   [dataset]
+   (-> dataset
+       (i/transform-col :agepreg #(if (some? %) (/ % 100.0) Double/NaN))
+       (i/transform-col :birthwgt_lb #(if (contains? #{97 98 99 nil} %) Double/NaN %))
+       (i/transform-col :birthwgt_oz #(if (contains? #{97 98 99 nil} %) Double/NaN %))
+   )
+)
+
+(defn prepare-dataset
+   [dataset]
+   (->> (clean-dataset dataset)
+        (i/add-derived-column :totalwgt_lb [:birthwgt_lb :birthwgt_oz] #(+ %1 (/ %2 16.0)))
+        (i/add-derived-column :totalwgt_kg [:totalwgt_lb] #(* % 0,453592))
+   )
+)
+
+(defn load-clean-dataset
+   []
+   (prepare-dataset (read-dat-file-filtered))
+)
+
 

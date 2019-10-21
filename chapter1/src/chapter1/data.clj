@@ -108,7 +108,7 @@
    [dataset]
    (->> (clean-dataset dataset)
         (i/add-derived-column :totalwgt_lb [:birthwgt_lb :birthwgt_oz] #(+ %1 (/ %2 16.0)))
-        (i/add-derived-column :totalwgt_kg [:totalwgt_lb] #(* % 0,453592))
+        (i/add-derived-column :totalwgt_kg [:totalwgt_lb] #(* % 0.453592))
    )
 )
 

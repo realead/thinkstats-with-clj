@@ -4,6 +4,9 @@
   )
 )
 
+
+;; chapter 1
+
 (defn view-data
   [data]
   (i/view data)
@@ -44,6 +47,10 @@
   )
 )
 
+
+
+;exercise 1.1
+
 (defn ex-1-1a
   [data]
   (let [age (->> data
@@ -79,3 +86,47 @@
         (println "weight for first live birth:", weight, "kg")
   )
 )
+
+
+;exercise 1.2
+
+(defn ex-1-2a
+  []
+  (let [data_resp (load-clean-dataset :FemResp2002)]
+       (->> data_resp
+            (i/$rollup :count :count :pregnum)
+            (i/$order :pregnum :asc)
+       )
+  )
+)
+
+;print distribution from fem_preg
+(defn ex-1-2b
+  []
+  (let [data_preg (load-clean-dataset :FemPreg2002)]
+       (->> data_preg
+            (i/$rollup :count :pregnum :caseid)
+            (i/$rollup :count :count :pregnum)
+            (i/$order :pregnum :asc)
+       )
+  )
+)
+
+;sanity check for datasets
+(defn ex-1-2c
+  []
+  (let [data_resp (->> (load-clean-dataset :FemResp2002)
+                       (i/$where {:pregnum {:$gt 0}})
+                       (i/$order :caseid :asc)
+                  )
+        data_preg (->> (load-clean-dataset :FemPreg2002)
+                       (i/$rollup :count :pregnum :caseid)
+                       (i/$order :caseid :asc)
+                  )
+        ;same_ids (= (i/$ :caseid data_resp) (i/$ :caseid data_preg))
+        ;same_nums (= (i/$ :pregnum data_resp) (i/$ :pregnum data_preg))
+       ]
+       (println "same" (= data_resp data_preg))
+  )
+)
+

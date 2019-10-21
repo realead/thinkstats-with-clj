@@ -6,7 +6,9 @@
 )
 
 (def examples [
-                   
+                 ex-1-2a
+                 ex-1-2b
+                 ex-1-2c 
               ]
 )
 

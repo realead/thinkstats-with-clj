@@ -6,9 +6,42 @@
   )
 )
 
+
+(defn clean-preg-dataset
+   [dataset]
+   (-> dataset
+       (i/transform-col :agepreg #(if (some? %) (/ % 100.0) Double/NaN))
+       (i/transform-col :birthwgt_lb #(if (contains? #{97 98 99 51 nil} %) Double/NaN %))
+       (i/transform-col :birthwgt_oz #(if (contains? #{97 98 99 nil} %) Double/NaN %))
+   )
+)
+
+(defn postload-preg-dataset
+   [dataset]
+   (->> (clean-preg-dataset dataset)
+        (i/add-derived-column :totalwgt_lb [:birthwgt_lb :birthwgt_oz] #(+ %1 (/ %2 16.0)))
+        (i/add-derived-column :totalwgt_kg [:totalwgt_lb] #(* % 0.453592))
+   )
+)
+
+(def dataset-infos {:FemPreg2002  {:dct-file "data/2002FemPreg.dct"
+                                   :dat-file "data/2002FemPreg.dat"
+                                   :features #{:caseid :prglngth :outcome 
+                                              :pregordr :birthord :birthwgt_lb
+                                              :birthwgt_oz :agepreg :finalwgt}
+                                   :postload  postload-preg-dataset
+                                  }
+                   :FemResp2002   {:dct-file "data/2002FemResp.dct"
+                                   :dat-file "data/2002FemResp.dat"
+                                   :features #{:caseid :pregnum}
+                                   :postload identity 
+                                  }
+                  }
+)
+
 (defn open-dct-file
-   []
-   (->> (io/reader "data/2002FemPreg.dct")
+   [dct-file]
+   (->> (io/reader dct-file)
         (line-seq)
         (rest)
         (butlast)
@@ -42,16 +75,10 @@
 
 
 (defn create-dat-line-parser-from-dct
-  []
-  (map parse-dct-line (open-dct-file))
+  [dct-file]
+  (map parse-dct-line (open-dct-file dct-file))
 )
 
-(defn open-dat-file
-   []
-   (->> (io/reader "data/2002FemPreg.dat")
-        (line-seq)
-   )
-)
 
 (defn extract-entry-from-line
     [line extractor parsed]
@@ -67,54 +94,46 @@
     )
 )
 
-
 (defn parse-dat-line
   [line dat-line-parser]
   (reduce #(extract-entry-from-line line %2 %1) [] dat-line-parser)
 )
 
+
+(defn open-dat-file
+   [dat-file]
+   (->> (io/reader dat-file)
+        (line-seq)
+   )
+)
+
 (defn read-dat-file
-  []
-  (let [parser (create-dat-line-parser-from-dct)
-        data (open-dat-file)]
+  [dataname]
+  (let [info (dataname dataset-infos)
+        parser (create-dat-line-parser-from-dct (:dct-file info))
+        data (open-dat-file (:dat-file info))]
        (i/dataset (map :name parser) (map #(parse-dat-line % parser) data))
   )    
 )
 
 (defn read-dat-file-filtered
-  ([] (read-dat-file-filtered #{:caseid :prglngth :outcome 
-                                :pregordr :birthord :birthwgt_lb
-                                :birthwgt_oz :agepreg :finalwgt})
-  )
-  ([features]
-    (let [parser (create-dat-line-parser-from-dct)
-          filtered_parser (filter #(contains? features (:name %)) parser)
-        data (open-dat-file)]
-       (i/dataset (map #(:name %) filtered_parser) (map #(parse-dat-line % filtered_parser) data))
-    )
-  )    
+  [{:keys [features dct-file  dat-file]}]
+  (let [parser (create-dat-line-parser-from-dct dct-file)
+        filtered_parser (filter #(contains? features (:name %)) parser)
+        data (open-dat-file dat-file)]
+       (i/dataset (map #(:name %) filtered_parser) 
+                  (map #(parse-dat-line % filtered_parser) data)
+       )
+    )   
 )
 
-(defn clean-dataset
-   [dataset]
-   (-> dataset
-       (i/transform-col :agepreg #(if (some? %) (/ % 100.0) Double/NaN))
-       (i/transform-col :birthwgt_lb #(if (contains? #{97 98 99 51 nil} %) Double/NaN %))
-       (i/transform-col :birthwgt_oz #(if (contains? #{97 98 99 nil} %) Double/NaN %))
-   )
-)
-
-(defn prepare-dataset
-   [dataset]
-   (->> (clean-dataset dataset)
-        (i/add-derived-column :totalwgt_lb [:birthwgt_lb :birthwgt_oz] #(+ %1 (/ %2 16.0)))
-        (i/add-derived-column :totalwgt_kg [:totalwgt_lb] #(* % 0.453592))
-   )
-)
 
 (defn load-clean-dataset
-   []
-   (prepare-dataset (read-dat-file-filtered))
+   [dataname]
+   (let [info (dataname dataset-infos)
+         postload (:postload info)]
+        (postload (read-dat-file-filtered info))
+   )
 )
 
 

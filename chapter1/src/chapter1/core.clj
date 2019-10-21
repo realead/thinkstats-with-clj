@@ -10,7 +10,7 @@
               ]
 )
 
-(def examples-with-data [
+(def examples-with-preg-data [
                view-data
                check-outcome
                check-weight
@@ -33,9 +33,9 @@
       )
   )
 
-  (let [data (load-clean-dataset)]
-      (doseq  [f examples-with-data] 
-          (-> (f data)
+  (let [dataset (load-clean-dataset :FemPreg2002)]
+      (doseq  [f examples-with-preg-data] 
+          (-> (f dataset)
               (pr-str)
               (println)
           )

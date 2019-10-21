@@ -16,6 +16,9 @@
                check-weight
                check-weight2
                caseid-10229
+               ex-1-1a
+               ex-1-1b
+               ex-1-1c
             ]
 )
 

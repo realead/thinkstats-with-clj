@@ -1,4 +1,4 @@
-(ns chapter1.data
+(ns thinkstats2e.data
   (:require [clojure.java.io :as io]
             [incanter.core :as i]
             [incanter.io :as iio]

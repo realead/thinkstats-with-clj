@@ -1,5 +1,5 @@
-(ns chapter1.examples
-  (:require [chapter1.data :refer :all]
+(ns thinkstats2e.chapter1
+  (:require [thinkstats2e.data :refer :all]
             [incanter.core :as i]
   )
 )

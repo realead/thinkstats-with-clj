@@ -1,6 +1,7 @@
 (ns thinkstats2e.core
   (:require [thinkstats2e.data :refer :all]
             [thinkstats2e.chapter1 :as ch1]
+            [thinkstats2e.chapter2 :as ch2]
   )
   (:gen-class)
 )
@@ -27,6 +28,28 @@
      }
 )
 
+
+(def ch2-descr
+     {:no-data [
+                 ch2/dummy
+               ]
+     :with-data [
+
+               ]
+     :data-loader #()
+     }
+)
+
+
+(def tasks { 
+           :ch1 ch1-descr
+           :ch2 ch2-descr
+           }
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn run 
    [{:keys [no-data with-data data-loader]}]
    (doseq  [f no-data] 
@@ -49,5 +72,9 @@
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (run ch1-descr)
+  (let [to-do (if (nil? args) (keys tasks) (map keyword args))]
+    (doseq  [ch to-do] 
+           (run (ch tasks))
+    )
+  )
 )

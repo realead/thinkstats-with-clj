@@ -144,5 +144,18 @@
         (i/$ col-name)
    )
 )
+
+
+(defn get-nth-row-element
+   [column-name row-id dataset]
+   (let [selected (i/$ column-name dataset)]
+        (if (sequential? selected)
+            (nth selected row-id)
+            selected
+        )
+   )
+)
+
+
    
 

@@ -130,3 +130,70 @@
   )
 )
 
+;investigate case with 19 pregnancies
+(defn ex-1-3a
+  []
+  (let [data (->> (load-clean-dataset :FemPreg2002)
+                  (i/$where {:agepreg {:$fn  #(Double/isFinite %)}})
+             )
+        caseid (->> data
+                    (i/$rollup :count :pregnum :caseid)
+                    (i/$order :pregnum :desc)
+                    (get-nth-row-element :caseid 0)
+               )
+        table (i/$where {:caseid caseid} data)
+        min_age (->> table
+                     (i/$order :agepreg :asc)
+                     (get-nth-row-element :agepreg 0)
+                )
+        max_age (->> table
+                     (i/$order :agepreg :desc)
+                     (get-nth-row-element :agepreg 0)
+                )
+       livebirths (->> table
+                       (i/$rollup :count :cnt :outcome)
+                       (i/$where {:outcome 1})
+                       (get-nth-row-element :cnt 0)
+                  ) 
+       ]
+       (println "caseid" caseid)
+       (println "min age" min_age)
+       (println "max age" max_age)
+       (println "#livebirths" livebirths)
+       (println "the whole history")
+       (println table)
+  )
+)
+
+;youngest/oldest pregnancy
+(defn ex-1-3b
+  []
+  (let [data (->> (load-clean-dataset :FemPreg2002)
+                  (i/$where {:agepreg {:$fn  #(Double/isFinite %)}})
+             )
+        youngest (->> data
+                     (i/$order :agepreg :asc)
+                     (get-nth-row-element :agepreg 0)
+                 )
+        oldest   (->> data
+                     (i/$order :agepreg :desc)
+                     (get-nth-row-element :agepreg 0)
+                 )
+        youngest_live (->> data
+                           (i/$order :agepreg :asc)
+                           (i/$where {:outcome 1})
+                           (get-nth-row-element :agepreg 0)
+                      )
+        oldest_live   (->> data
+                           (i/$order :agepreg :desc)
+                           (i/$where {:outcome 1})
+                           (get-nth-row-element :agepreg 0)
+                      )
+       ]
+       (println "youngest" youngest "youngest livebirth" youngest_live)
+       (println "oldest" oldest "oldest livebirth" oldest_live)
+  )
+)
+
+
+

@@ -31,12 +31,14 @@
 
 (def ch2-descr
      {:no-data [
-                 ch2/dummy
+                 
                ]
      :with-data [
-
+                  ch2/hists-of-data
+                  ch2/hists-of-filtered-prglngth
+                  ch2/smallest-biggest-of-filtered-prglngth
                ]
-     :data-loader #()
+     :data-loader #(load-clean-dataset :FemPreg2002)
      }
 )
 

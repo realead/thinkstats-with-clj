@@ -37,6 +37,8 @@
                   ch2/hists-of-data
                   ch2/hists-of-filtered-prglngth
                   ch2/smallest-biggest-of-filtered-prglngth
+                  ch2/first-vs-later
+                  ch2/first-vs-later-stats
                ]
      :data-loader #(load-clean-dataset :FemPreg2002)
      }

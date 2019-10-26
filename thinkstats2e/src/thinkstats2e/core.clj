@@ -50,9 +50,13 @@
 
 (def ch3-descr
      {:no-data [
-                  ch3/dummy
+                  ch3/test-pmf
+                  ch3/students-and-profs
+                  ch3/bias-unbias
                ]
      :with-data [
+                  ch3/first-vs-later-density
+                  ch3/first-vs-later-pmf-diff
                ]
      :data-loader #(load-clean-dataset :FemPreg2002)
      }

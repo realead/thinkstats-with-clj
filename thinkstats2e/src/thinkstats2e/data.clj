@@ -24,6 +24,11 @@
    )
 )
 
+(defn postload-resp-dataset
+   [dataset]
+   dataset
+)
+
 (def dataset-infos {:FemPreg2002  {:dct-file "data/2002FemPreg.dct"
                                    :dat-file "data/2002FemPreg.dat"
                                    :features #{:caseid :prglngth :outcome 
@@ -33,8 +38,9 @@
                                   }
                    :FemResp2002   {:dct-file "data/2002FemResp.dct"
                                    :dat-file "data/2002FemResp.dat"
-                                   :features #{:caseid :pregnum}
-                                   :postload identity 
+                                   :features #{:caseid :pregnum :totincr :age_r 
+                                               :numfmhh :parity}
+                                   :postload  postload-resp-dataset
                                   }
                   }
 )

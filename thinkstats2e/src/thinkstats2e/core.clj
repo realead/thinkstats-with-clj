@@ -31,7 +31,8 @@
 
 (def ch2-descr
      {:no-data [
-                 
+                  ch2/ex-2-2                 
+                  ch2/ex-2-3
                ]
      :with-data [
                   ch2/hists-of-data
@@ -39,6 +40,7 @@
                   ch2/smallest-biggest-of-filtered-prglngth
                   ch2/first-vs-later
                   ch2/first-vs-later-stats
+                  ch2/ex-2-4
                ]
      :data-loader #(load-clean-dataset :FemPreg2002)
      }

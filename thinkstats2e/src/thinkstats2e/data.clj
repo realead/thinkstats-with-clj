@@ -39,7 +39,7 @@
                    :FemResp2002   {:dct-file "data/2002FemResp.dct"
                                    :dat-file "data/2002FemResp.dat"
                                    :features #{:caseid :pregnum :totincr :age_r 
-                                               :numfmhh :parity}
+                                               :numfmhh :parity :numkdhh}
                                    :postload  postload-resp-dataset
                                   }
                   }
@@ -163,5 +163,31 @@
 )
 
 
-   
+;;;;; parsing other files
+
+
+ 
+(defn extract-speed-from-line
+  [line]
+  (when (and (> (count line) 50) 
+             (= (nth line 40) \:)
+             (not= \< (first line))
+        )
+        (let [mins (Integer/parseInt (clojure.string/trim (subs line 38 40)))
+            seks (Integer/parseInt (subs line 41 43))
+            in-hours ( / (+ seks (* mins 60.0)) 3600.0)
+           ]
+           (/ 1.0 in-hours)
+        )
+  )
+)
+  
+(defn read-speeds
+   []
+   (->> (io/reader "data/Apr25_27thAn_set1.shtml")
+        (line-seq)
+        (map extract-speed-from-line)
+        (filter some?)
+   )
+)
 

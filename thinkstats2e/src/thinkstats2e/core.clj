@@ -53,10 +53,15 @@
                   ch3/test-pmf
                   ch3/students-and-profs
                   ch3/bias-unbias
+                  ch3/work-dataframes
+                  ch3/ex-3-1
+                  ch3/ex-3-2
+                  ch3/ex-3-4
                ]
      :with-data [
                   ch3/first-vs-later-density
                   ch3/first-vs-later-pmf-diff
+                  ch3/ex-3-3
                ]
      :data-loader #(load-clean-dataset :FemPreg2002)
      }

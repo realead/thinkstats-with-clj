@@ -70,7 +70,7 @@
 
 (def ch4-descr
      {:no-data [
-                  ch4/dummy
+                  ch4/check-percentiles
                ]
      :with-data [
                ]

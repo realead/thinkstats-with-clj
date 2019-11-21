@@ -1,5 +1,6 @@
 (ns thinkstats2e.chapter3
   (:require [thinkstats2e.data :refer :all]
+            [thinkstats2e.utils :refer :all]
             [incanter.core :as i]
             [incanter.charts :as c]
             [incanter.stats :as s]
@@ -10,47 +11,6 @@
 ;; chapter 3
 
 ; 3.1
-
-(defn normalize-frequencies
-  [freqs]
-  (let [norm (apply + (vals freqs))]
-      (->> (for [[k v] freqs] 
-                 [k (double (/  v norm))])
-           (into (sorted-map))
-      ) 
-  )
-)
-
-(defn mean-of-pmf
-     [pmf]
-     (reduce +
-         (for [[k v] pmf]
-              (* k v)
-         )
-     )
-)
-
-(defn variance-of-pmf
-     [pmf]
-     ;no so good: traverses series twice
-     (let [m (mean-of-pmf pmf)]
-           (reduce +   
-               (for [[k p] pmf
-                    :let [d (- k m)]
-                   ]
-                   (* p d d)
-               )
-           )
-     )
-)
-
-(defn pmf
-   [series]
-   (-> series
-       (frequencies)
-       (normalize-frequencies)
-   )
-)
 
 (defn test-pmf
    []

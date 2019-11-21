@@ -97,6 +97,8 @@
    )
 )
 
+;; 4.4
+
 (defn test-value-cdf
     []
     (let [c  (cdf [0 0 1 1 1 2 2 3])]
@@ -111,3 +113,22 @@
         (println "value(1) =  3 :" (value-cdf 1.0 c))
     )
 )
+
+(defn plot-prglngth
+   [data]
+   (let [lengths (->> data
+                      (i/$where {:outcome 1})
+                      (select-filtered :prglngth)
+                 )
+          c (cdf lengths)
+          f (fn [x] (eval-cdf x c))
+        ]
+        (-> (c/function-plot f 0 60 
+                   :x-label "weeks"
+                   :y-label "cdf")
+            (i/view)
+        )
+   )
+)
+
+

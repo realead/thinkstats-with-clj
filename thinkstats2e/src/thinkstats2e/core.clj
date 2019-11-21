@@ -77,6 +77,7 @@
                   ch4/test-value-cdf
                ]
      :with-data [
+                  ch4/plot-prglngth
                ]
      :data-loader #(load-clean-dataset :FemPreg2002)
      }

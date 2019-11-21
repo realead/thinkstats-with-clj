@@ -71,6 +71,10 @@
 (def ch4-descr
      {:no-data [
                   ch4/check-percentiles
+                  ch4/calc-cdf
+                  ch4/test-eval-cdf
+                  ch4/plot-cdf
+                  ch4/test-value-cdf
                ]
      :with-data [
                ]

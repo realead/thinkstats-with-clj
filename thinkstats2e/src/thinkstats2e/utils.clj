@@ -45,3 +45,47 @@
    )
 )
 
+
+(defn cdf
+   [series]
+   (let [p (pmf series)
+         m (apply min (keys p)) ]
+        (->> (reductions (fn [f s] [(first s) (+ (second f) (second s))]) [(dec m) 0] p)
+             (into (sorted-map))
+        )
+
+   )
+)
+
+(defn cdf
+   [series]
+   (let [p (pmf series)
+         m (apply min (keys p)) ]
+        (->> (reductions (fn [f s] [(first s) (+ (second f) (second s))]) [(dec m) 0] p)
+             (into (sorted-map))
+        )
+
+   )
+)
+
+(defn eval-cdf
+   [x cdf]
+   (let [s (rsubseq cdf <= x)]
+        (if (empty? s)
+            0.0
+            (second (first s))
+         )
+   )
+)
+
+; not fastest but works for now:
+(defn value-cdf
+   [x cdf]
+   (-> (drop-while #(< (second %) x) cdf)
+       (first)
+       (first)
+   )
+)
+
+
+ 

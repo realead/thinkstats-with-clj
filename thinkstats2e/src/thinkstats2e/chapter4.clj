@@ -230,3 +230,34 @@
         )
    )
 )
+
+
+(defn ex-4-1
+   [data]
+   (let [series    (->> data
+                             (i/$where {:birthord 1 :prglngth {:gt 27}})
+                             (select-filtered :totalwgt_kg)
+                   )
+         cdf-series (cdf series)
+         my-rank (percentil-rank-cdf 2.7 cdf-series)
+        ]
+        (println "my rank with 2.7kg:" my-rank)
+   )
+)
+
+(defn ex-4-2
+   []
+   (let [series    (repeatedly 1000 rand)
+         f (create-cdf-f series)
+        ]
+        ;what should be pmf here anyway?
+        (-> (c/function-plot f 0 1
+                   :x-label "value"
+                   :y-label "cdf"
+                   :series-label "cdf of rand"
+                   :legend true)
+            (i/view)
+        )
+   )
+)
+

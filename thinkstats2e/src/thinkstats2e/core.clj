@@ -75,6 +75,7 @@
                   ch4/test-eval-cdf
                   ch4/plot-cdf
                   ch4/test-value-cdf
+                  ch4/ex-4-2
                ]
      :with-data [
                   ch4/plot-prglngth
@@ -82,6 +83,7 @@
                   ch4/weight-quantils
                   ch4/show-percentil-cdf
                   ch4/show-random
+                  ch4/ex-4-1
                ]
      :data-loader #(load-clean-dataset :FemPreg2002)
      }

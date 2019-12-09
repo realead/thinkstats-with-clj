@@ -131,4 +131,102 @@
    )
 )
 
+;; 4.5
+(defn create-cdf-f
+  [series]
+  (fn [x] (eval-cdf x (cdf series)))
+)
 
+
+(defn plot-weight-comparison
+   [data]
+   (let [first-children (->> data
+                             (i/$where {:birthord 1 :prglngth {:gt 27}})
+                             (select-filtered :totalwgt_kg)
+                        )
+         later-children (->> data 
+                              (i/$where {:outcome 1 :birthord {:$ne 1} :prglngth {:gt 27}})
+                              (select-filtered :totalwgt_kg)
+                        )
+         f-first (create-cdf-f first-children)
+         f-second (create-cdf-f later-children)
+        ]
+        (-> (c/function-plot f-first 0 7
+                   :x-label "weeks"
+                   :y-label "cdf"
+                   :series-label "cdf weight first children"
+                   :legend true)
+            (c/add-function f-second 0 7
+                   :series-label "cdf weight second children")
+            (i/view)
+        )
+   )
+)
+
+;; 4.6 
+
+(defn weight-quantils
+   [data]
+   (let [first-children (->> data
+                             (i/$where {:birthord 1 :prglngth {:gt 27}})
+                             (select-filtered :totalwgt_kg)
+                        )
+         later-children (->> data 
+                              (i/$where {:outcome 1 :birthord {:$ne 1} :prglngth {:gt 27}})
+                              (select-filtered :totalwgt_kg)
+                        )
+         cdf-first (cdf first-children)
+         cdf-later (cdf later-children)
+        ]
+        (println "first children:")
+        (println  " median" (median-cdf cdf-first))
+        (println  " iqr"  (iqr-cdf cdf-first))
+        (println "later children:")
+        (println  " median" (median-cdf cdf-later))
+        (println  " iqr"  (iqr-cdf cdf-later))  
+   )
+)
+
+;;4.7 
+
+(defn show-percentil-cdf
+   [data]
+   (let [series    (->> data
+                             (i/$where {:birthord 1 :prglngth {:gt 27}})
+                             (select-filtered :totalwgt_kg)
+                   )
+         cdf-series (cdf series)
+         samples (s/sample series :size 100)
+         ranks (map #(percentil-rank-cdf % cdf-series) samples)
+         f-ranks (create-cdf-f ranks)
+        ]
+        (-> (c/function-plot f-ranks 0 101
+                   :x-label "percentil rank"
+                   :y-label "cdf")
+            (i/view)
+        )
+   )
+)
+
+(defn show-random
+   [data]
+   (let [series    (->> data
+                             (i/$where {:birthord 1 :prglngth {:gt 27}})
+                             (select-filtered :totalwgt_kg)
+                   )
+         cdf-series (cdf series)
+         random-series (repeatedly 200 #(random-cdf cdf-series)) 
+         f-first (create-cdf-f series)
+         f-second (create-cdf-f random-series)
+        ]
+        (-> (c/function-plot f-first 0 7
+                   :x-label "weeks"
+                   :y-label "cdf"
+                   :series-label "cdf data"
+                   :legend true)
+            (c/add-function f-second 0 7
+                   :series-label "cdf random")
+            (i/view)
+        )
+   )
+)

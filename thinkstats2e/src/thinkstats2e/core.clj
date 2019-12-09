@@ -78,6 +78,10 @@
                ]
      :with-data [
                   ch4/plot-prglngth
+                  ch4/plot-weight-comparison
+                  ch4/weight-quantils
+                  ch4/show-percentil-cdf
+                  ch4/show-random
                ]
      :data-loader #(load-clean-dataset :FemPreg2002)
      }

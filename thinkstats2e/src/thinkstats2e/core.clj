@@ -4,6 +4,7 @@
             [thinkstats2e.chapter2 :as ch2]
             [thinkstats2e.chapter3 :as ch3]
             [thinkstats2e.chapter4 :as ch4]
+            [thinkstats2e.chapter5 :as ch5]
   )
   (:gen-class)
 )
@@ -89,12 +90,24 @@
      }
 )
 
+(def ch5-descr
+     {:no-data [
+                  ch5/dummy
+               ]
+     :with-data [
+                  
+               ]
+     :data-loader #(load-clean-dataset :FemPreg2002)
+     }
+)
+
 
 (def tasks { 
            :ch1 ch1-descr
            :ch2 ch2-descr
            :ch3 ch3-descr
            :ch4 ch4-descr
+           :ch5 ch5-descr
            }
 )
 

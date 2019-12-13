@@ -95,9 +95,11 @@
                   ch5/show-exp-cdfs
                   ch5/babyboom
                   ch5/show-norm-cdfs
+                  ch5/show-normal-prob-plot
                ]
      :with-data [
                   ch5/show-weight-with-norm-cdf
+                  ch5/show-normal-prob-plot-weights
                ]
      :data-loader #(load-clean-dataset :FemPreg2002)
      }

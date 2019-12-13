@@ -23,5 +23,6 @@ The pdf of the book can be downloaded here: https://greenteapress.com/wp/think-s
        - use `(def preg_data (load-clean-dataset :NAME))` to load filtered/cleaned one of the following datasets: FemPreg2002, FemResp2002
        - use `(read-dat-file :NAME)` to read/load raw data for the names above
        - `(chX/<Example_Y> preg_data)` to run an example y, which needs the input
-       - `use 'thinkstats2e.chapter1 :reload)` to reload chapter1.clj
+       - `(use 'thinkstats2e.chapter1 :reload)` to reload chapter1.clj
+       - `(use '[incanter.core :as i])` to load incanter-functionality
 

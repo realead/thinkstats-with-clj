@@ -132,10 +132,7 @@
 )
 
 ;; 4.5
-(defn create-cdf-f
-  [series]
-  (fn [x] (eval-cdf x (cdf series)))
-)
+
 
 
 (defn plot-weight-comparison

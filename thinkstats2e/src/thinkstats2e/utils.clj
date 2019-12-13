@@ -78,6 +78,11 @@
    )
 )
 
+(defn create-cdf-f
+  [series]
+  (fn [x] (eval-cdf x (cdf series)))
+)
+
 ; not fastest but works for now:
 (defn value-cdf
    [x cdf]

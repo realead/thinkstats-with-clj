@@ -92,7 +92,8 @@
 
 (def ch5-descr
      {:no-data [
-                  ch5/dummy
+                  ch5/show-exp-cdfs
+                  ch5/babyboom
                ]
      :with-data [
                   

@@ -159,4 +159,41 @@
    )
 )
 
+;5.4
+
+(defn show-lognormal
+   []
+   (let [
+         data (->> (iio/read-dataset "data/weights.txt" :skip 1 :delim \space)
+                   (i/$ 0)
+                   (sort)
+              )
+         data-mean (s/mean data)
+         data-sd   (s/sd data)
+         log-data (map i/log data)
+         log-data-mean (s/mean log-data)
+         log-data-sd   (s/sd log-data)
+         x (sort (s/sample-normal (count data) :mean 0 :sd 1.0))
+        ]
+        (-> (c/xy-plot x data
+                   :x-label "standard normal sample"
+                   :y-label "sample weigths"
+                   :series-label "weights"
+                   :legend true)
+            (c/add-function #(+ (* data-sd %) data-mean) -4 4
+                 :series-label "model weights")
+            (i/view)
+        )
+        (-> (c/xy-plot x log-data
+                   :x-label "standard normal sample"
+                   :y-label "sample log weigths"
+                   :series-label "log weights"
+                   :legend true)
+            (c/add-function #(+ (* log-data-sd %) log-data-mean) -4 4
+                 :series-label "model log weights")
+            (i/view)
+        )
+   )
+)
+
 

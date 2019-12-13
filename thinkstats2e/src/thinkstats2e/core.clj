@@ -96,6 +96,7 @@
                   ch5/babyboom
                   ch5/show-norm-cdfs
                   ch5/show-normal-prob-plot
+                  ch5/show-lognormal
                ]
      :with-data [
                   ch5/show-weight-with-norm-cdf

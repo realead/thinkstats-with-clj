@@ -63,3 +63,40 @@
   )
 )
 
+(defn show-norm-cdfs
+  []
+  (-> (c/function-plot #(s/cdf-normal % :mean 1.0 :sd 0.5) -1 4
+           :x-label "x"
+           :y-label "cdf"
+           :series-label ":mean 1 :sd 0.5"
+           :title "different normal cdfs"
+           :legend true)
+    (c/add-function #(s/cdf-normal % :mean 2.0 :sd 0.4) -1 4
+           :series-label ":mean 2 :sd 0.4")
+    (c/add-function #(s/cdf-normal % :mean 3.0 :sd 0.3) -1 4
+           :series-label ":mean 3 :sd 0.3")
+    (i/view)
+  )            
+)
+
+(defn show-weight-with-norm-cdf
+   [data]
+   (let [first-children (->> data
+                             (i/$where {:prglngth {:gt 27}})
+                             (select-filtered :totalwgt_kg)
+                        )
+         f-first (create-cdf-f first-children)
+        ]
+        (-> (c/function-plot f-first 0 7
+                   :x-label "kg"
+                   :y-label "cdf"
+                   :series-label "cdf weight children"
+                   :legend true)
+            (c/add-function #(s/cdf-normal % :mean 3.30 :sd 0.56) 0 7
+                   :series-label "normal :mean 3.30 :sd 0.56")
+            (i/view)
+        )
+   )
+)
+
+

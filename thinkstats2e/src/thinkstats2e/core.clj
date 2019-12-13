@@ -94,9 +94,10 @@
      {:no-data [
                   ch5/show-exp-cdfs
                   ch5/babyboom
+                  ch5/show-norm-cdfs
                ]
      :with-data [
-                  
+                  ch5/show-weight-with-norm-cdf
                ]
      :data-loader #(load-clean-dataset :FemPreg2002)
      }

@@ -100,6 +100,7 @@
                   ch5/show-pareto-cdfs
                   ch5/show-pareto-ccdfs
                   ch5/analyze-populations
+                  ch5/show-created-randoms
                ]
      :with-data [
                   ch5/show-weight-with-norm-cdf

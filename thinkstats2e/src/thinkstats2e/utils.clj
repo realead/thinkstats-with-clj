@@ -122,6 +122,11 @@
    (percentil-cdf (rand-int 101) cdf)
 )
 
+(defn random-from-icdf-f
+   [icdf]
+   (icdf (rand))
+)
+
 
 
  

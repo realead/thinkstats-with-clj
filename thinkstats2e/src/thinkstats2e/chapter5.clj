@@ -299,4 +299,32 @@
     )
 )
 
+;5.6
+
+(defn create-exp-icdf
+  [alpha]
+  (fn [p] (/ (i/log (- 1.0 p)) (- alpha)))
+)
+
+(defn show-created-randoms
+   []
+   (let [alpha 2.0
+         icdf (create-exp-icdf alpha)
+         series (repeatedly 1000 #(random-from-icdf-f icdf))
+         f-experimental (create-cdf-f series)
+         f-theory (create-exp-cdf alpha)
+        ]
+          (-> (c/function-plot f-theory 0 5
+                   :x-label "x"
+                   :y-label "cdf"
+                   :series-label "theory"
+                   :legend true
+                   :title "comparison theory vs. random distribution")
+            (c/add-function f-experimental 0 5
+                   :series-label "random distribution")
+            (i/view)
+          ) 
+   )
+)
+
 

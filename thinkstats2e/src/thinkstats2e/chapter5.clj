@@ -197,3 +197,106 @@
 )
 
 
+(defn create-pareto-ccdf
+  [xm alpha]
+  (fn [x] (i/pow (/ x xm) (- alpha)))
+)
+
+(defn create-pareto-cdf
+  [xm alpha]
+  (fn [x] (- 1.0 (i/pow (/ x xm) (- alpha))))
+)
+
+
+(defn show-pareto-cdfs
+  []
+  (-> (c/function-plot (create-pareto-cdf 0.5 0.5) 0.5 3
+           :x-label "x"
+           :y-label "cdf"
+           :series-label "xm=0.5 alpha=0.5"
+           :legend true
+           :title "pareto cdfs")
+    (c/add-function (create-pareto-cdf 0.5 1) 0.5 3
+           :series-label "xm=0.5 alpha=1.0")
+    (c/add-function (create-pareto-cdf 0.5 2) 0.5 3
+           :series-label "xm=0.5 alpha=2.0")
+    (i/view)
+  )            
+)
+
+(defn show-pareto-ccdfs
+  []
+  (-> (c/function-plot (create-pareto-ccdf 0.5 0.5) 0.5 3
+           :x-label "x"
+           :y-label "cdf"
+           :series-label "xm=0.5 alpha=0.5"
+           :legend true
+           :title "pareto ccdfs")
+    (c/add-function (create-pareto-ccdf 0.5 1) 0.5 3
+           :series-label "xm=0.5 alpha=1.0")
+    (c/add-function (create-pareto-ccdf 0.5 2) 0.5 3
+           :series-label "xm=0.5 alpha=2.0")
+    (c/set-axis :x (c/log-axis :label "Log x"))
+    (c/set-axis :y (c/log-axis :label "Log ccdf"))
+    (i/view)
+  )            
+)
+
+(defn analyze-populations
+   []
+   (let [series (->> (iio/read-dataset "data/PEP_2012_PEPANNRES_with_ann.csv" :skip 2)
+                     (i/$ 7)
+                     (filter #(> % 0))
+                )
+         sorted-series (sort series)
+         cdf-f (create-cdf-f series)
+         ccdef-f #(max 1e-16 (- 1.0 (cdf-f %)))
+         x (sort (s/sample-normal (count series) :mean 0 :sd 1.0))
+        ]
+        ;pareto
+        (-> (c/function-plot ccdef-f  1 1e7
+               :series-label "data"
+               :legend true
+               :title "comparison with pareto model")
+            (c/add-function (create-pareto-ccdf 5000 1.4) 5000 1e7
+              :series-label "pareto model xm=5000 alpha=1.4")
+            (c/set-axis :x (c/log-axis :label "Log city population"))
+            (c/set-axis :y (c/log-axis :label "Log ccdf"))
+            (c/set-y-range 1e-10 1)
+            (i/view)
+        )
+        ;normal 
+        (let  [ series-mean (s/mean series)
+                series-sd   (s/sd series)
+              ]
+            (-> (c/xy-plot x sorted-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with normal model"
+                       :legend true)
+                (c/add-function #(+ (* series-sd %) series-mean) -4 4
+                     :series-label "normal model")
+                (i/view)
+            )
+        )
+        ;lognormal
+        (let  [ log-series (i/log sorted-series)
+                log-series-mean (s/mean log-series)
+                log-series-sd   (s/sd log-series)
+              ]
+            (-> (c/xy-plot x log-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with lognormal model"
+                       :legend true)
+                (c/add-function #(+ (* log-series-sd %) log-series-mean) -4 4
+                     :series-label "lognormal model")
+                (i/view)
+            )
+        )
+    )
+)
+
+

@@ -80,7 +80,12 @@
 
 (defn create-cdf-f
   [series]
-  (fn [x] (eval-cdf x (cdf series)))
+  (fn [x] (min 1.0 (eval-cdf x (cdf series))))
+)
+
+(defn create-ccdf-f
+  [series]
+  (fn [x] (max 0.0 (- 1.0 (eval-cdf x (cdf series)))))
 )
 
 ; not fastest but works for now:

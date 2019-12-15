@@ -97,6 +97,9 @@
                   ch5/show-norm-cdfs
                   ch5/show-normal-prob-plot
                   ch5/show-lognormal
+                  ch5/show-pareto-cdfs
+                  ch5/show-pareto-ccdfs
+                  ch5/analyze-populations
                ]
      :with-data [
                   ch5/show-weight-with-norm-cdf

@@ -207,6 +207,11 @@
   (fn [x] (- 1.0 (i/pow (/ x xm) (- alpha))))
 )
 
+(defn create-pareto-icdf
+  [xm alpha]
+  (fn [x] (* xm (i/exp (/ (i/log (- 1.0 x)) (- alpha)))))
+)
+
 
 (defn show-pareto-cdfs
   []
@@ -324,6 +329,104 @@
                    :series-label "random distribution")
             (i/view)
           ) 
+   )
+)
+
+;;exercises 
+
+(defn ex-5-1
+  []
+  (let [
+        f (fn [x] (s/cdf-normal x :mean 178 :sd 7.7))
+       ]
+       (println "probabilty for bluemen" (-  (f 185.42) (f 177.80)))
+  )
+)
+
+
+
+(defn ex-5-2
+  []
+  (let [xm 1.0
+        alpha 1.7
+        cdf-f (create-pareto-cdf xm alpha)
+        icdf-f (create-pareto-icdf xm alpha)
+        mean-theory (* xm alpha (/ 1.0 (- alpha 1.0)))
+       ]
+      (-> (c/function-plot cdf-f 1 5
+               :x-label "x"
+               :y-label "cdf"
+               :series-label "xm=1.0 alpha=1.7"
+               :legend true
+               :title "pareto world")
+        (i/view)
+      )  
+      (println "median:" (* xm (i/exp (/ (i/log 2) alpha))))
+      (println "mean theory:" mean-theory) 
+      (println "mean experiment:" (s/mean (repeatedly 10000 #(random-from-icdf-f icdf-f))))
+      (println "smaller than mean:" (cdf-f mean-theory))
+      (let [p-one-smaller-km (cdf-f 1e3)
+            p-all-smaller (i/pow p-one-smaller-km 7e9)
+            p-at-least-one-bigger (- 1.0 p-all-smaller)
+           ]
+           (println "prob at least one of 7e9 bigger than 1km:" p-at-least-one-bigger) 
+      )
+      (let [p-one-smaller (cdf-f 1e6)
+            p-all-smaller (i/pow p-one-smaller 7e9)
+            p-at-least-one-bigger (- 1.0 p-all-smaller)
+           ]
+           (println "instead of mean (complicted to calculate), median as estimate: prob at least one of 7e9 bigger than 1e6m:" p-at-least-one-bigger) 
+      )
+  )         
+)
+
+(defn create-weibull-ccdf
+  [alpha k]
+  (fn [x] (i/exp (- (i/pow (/ x alpha) k)
+                 )
+          )
+  )
+)
+
+(defn create-weibull-cdf
+  [alpha k]
+  (let [ccdf (create-weibull-ccdf alpha k)]
+      (fn [x] (- 1.0 (ccdf x)))
+  )
+)
+
+(defn ex-5-3
+   []
+   ;; just show cdfs:
+   (-> (c/function-plot (create-weibull-cdf 10 2)  0 20
+               :x-label "x"
+               :y-label "cdf"
+               :series-label "weibull alpha=10 k=2"
+               :legend true
+               :title "weibull's cdfs")
+        (c/add-function (create-weibull-cdf 10 3) 0 20
+          :series-label "weibull alpha=10 k=3")
+        (c/add-function (create-weibull-cdf 5 2) 0 20
+          :series-label "weibull alpha=5 k=2")
+        (i/view)
+    )
+   ;; show ccdfs:
+   (let [f1 #(- (i/log ((create-weibull-ccdf 10 2) %)))
+         f2 #(- (i/log ((create-weibull-ccdf 10 3) %)))
+         f3 #(- (i/log ((create-weibull-ccdf 5 2) %)))
+        ]
+       (-> (c/function-plot f1  0 20
+                   :series-label "weibull alpha=10 k=2"
+                   :legend true
+                   :title "weibull's log ccdfs")
+            (c/add-function f2 0 20
+              :series-label "weibull alpha=10 k=3")
+            (c/add-function f3 0 20
+              :series-label "weibull alpha=5 k=2")
+            (c/set-axis :x (c/log-axis :label "Log x"))
+            (c/set-axis :y (c/log-axis :label "Log log ccdf"))
+            (i/view)
+        )
    )
 )
 

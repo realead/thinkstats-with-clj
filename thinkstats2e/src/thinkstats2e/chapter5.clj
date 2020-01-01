@@ -890,3 +890,46 @@
        (println "(cheated: gumbel)")
   )
 )
+
+
+(defn ex-5-6
+  []
+  (let [hist-y [4204 4729 6982 7157 7131 6740 6354 5832 5547 5254 5102 4256 4356 3949 3756 3414 3326 2643 2678 2223 2606 1838 1986 1464 1596 1327 1253 1140 1119 920 1143 805 731 575 616 570 502 364 432 378]
+        hist-x (range 2500 199999 5000)
+
+        n-200-250 2549
+        n-251     2911
+        cdf (-> (into (sorted-map)(map vector hist-x hist-y))
+                (normalize-frequencies)
+                (cdf-from-pmf) 
+            )
+        cdf-sum (float (apply + hist-y))
+        all-sum (float (apply +  (conj hist-y n-200-250 n-251)))
+        factor (/ cdf-sum all-sum)
+        ccdf-f #(- 1.0 (* factor (eval-cdf % cdf)))
+       ]
+       (-> (c/xy-plot hist-x hist-y
+                       :x-label "income"
+                       :y-label "number of people"
+                       :series-label "data"
+                       :title "histogram"
+                       :legend true)
+           (i/view)
+       )
+       (-> (c/function-plot ccdf-f 1 200000
+                  :x-label "values"
+                  :y-label "cdf"
+                  :series-label "ccdf-data"
+                  :legend true
+           )
+           (c/add-function (create-pareto-ccdf 2e4 0.7) 2e4 3e5
+                           :series-label "pareto model xm=2e5 lambda=0.7")
+           (c/add-function (create-pareto-ccdf 2e4 0.9) 2e4 3e5
+                           :series-label "pareto model xm=2e5 lambda=0.9")
+           (c/set-axis :x (c/log-axis :label "Log x"))
+           (c/set-axis :y (c/log-axis :label "Log ccdf"))
+           (i/view)
+       )
+       (println "pareto model is good approximation for incomes > 2e4") 
+  )
+)

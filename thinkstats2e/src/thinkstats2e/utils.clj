@@ -45,17 +45,16 @@
    )
 )
 
-
-(defn cdf
-   [series]
-   (let [p (pmf series)
-         m (apply min (keys p)) ]
+(defn cdf-from-pmf
+   [p]
+   (let [m (apply min (keys p)) ]
         (->> (reductions (fn [f s] [(first s) (+ (second f) (second s))]) [(dec m) 0] p)
              (into (sorted-map))
         )
 
    )
 )
+
 
 (defn cdf
    [series]

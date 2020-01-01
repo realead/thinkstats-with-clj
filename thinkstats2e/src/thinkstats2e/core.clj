@@ -104,6 +104,15 @@
                   ch5/ex-5-1
                   ch5/ex-5-2
                   ch5/ex-5-3
+                  ch5/ex-5-4
+                  ch5/ex-5-5-0
+                  ch5/ex-5-5-1
+                  ch5/ex-5-5-2
+                  ch5/ex-5-5-3
+                  ch5/ex-5-5-4
+                  ch5/ex-5-5-5
+                  ch5/ex-5-5-6
+                  ch5/ex-5-5-7
                ]
      :with-data [
                   ch5/show-weight-with-norm-cdf

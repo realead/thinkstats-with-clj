@@ -430,4 +430,463 @@
    )
 )
 
+(defn ex-5-4
+  []
+  (let [times (->> (iio/read-dataset "data/babyboom.dat" :skip 59 :delim \space)
+                   (i/$ 3)
+              )
+        diffs (map - (rest times) times)
+        f (create-cdf-f diffs)
+        sim-diffs (s/sample-exp (count diffs) :rate (/ 1.0 33.0))
+        f2 (create-cdf-f sim-diffs)
+        sim-diffs2 (s/sample-exp (count diffs) :rate (/ 1.0 33.0))
+        f3 (create-cdf-f sim-diffs2)
+       ]
+       (-> (c/function-plot f 0 200
+              :x-label "waiting time in min"
+              :y-label "cdf"
+              :title "cdf of waiting times"
+              :series-label "cdf from data"
+              :legend true
+           )
+           (c/add-function f2 0 200
+                 :series-label "cdf simulated")
+           (c/add-function f3 0 200
+                 :series-label "cdf simulated 2")
+           (i/view)
+       )   
+  )
+)
 
+
+
+(defn ex-5-5-0
+  []
+  (let [series (->> (iio/read-dataset "data/mystery0.dat")
+                    (i/$ 0)
+               )
+       ]
+       (-> (c/histogram  series
+                        :nbins 20         
+                        :density true 
+                        :title "mystery0"
+           )
+           (i/view)
+       ) 
+      (-> (c/function-plot (create-cdf-f series) -1 101
+                  :x-label "values"
+                  :y-label "cdf"
+                  :title "mystery0: uniform distribution 0..100"
+           )
+           (i/view)
+     ) 
+     (println "mystery0: uniform distribution")
+  )
+)
+
+(defn ex-5-5-1
+  []
+  (let [sorted-series (->> (iio/read-dataset "data/mystery1.dat")
+                    (i/$ 0)
+                    (sort)
+               )
+        x (sort (s/sample-normal (count sorted-series) :mean 0 :sd 1.0))
+       ]
+       (-> (c/histogram  sorted-series
+                        :nbins 20         
+                        :density true 
+                        :title "mystery1"
+           )
+           (i/view)
+       ) 
+        ;normal 
+        (let  [ series-mean (s/mean sorted-series)
+                series-sd   (s/sd sorted-series)
+              ]
+            (-> (c/xy-plot x sorted-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with normal model"
+                       :legend true)
+                (c/add-function #(+ (* series-sd %) series-mean) -4 4
+                     :series-label "normal model")
+                (i/view)
+            )
+        )
+        ;lognormal
+        (let  [ log-series (i/log sorted-series)
+                log-series-mean (s/mean log-series)
+                log-series-sd   (s/sd log-series)
+              ]
+            (-> (c/xy-plot x log-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with lognormal model"
+                       :legend true)
+                (c/add-function #(+ (* log-series-sd %) log-series-mean) -4 4
+                     :series-label "lognormal model")
+                (i/view)
+            )
+        ) 
+       (println "mystery1: neither normal nor lognormal (cheated: from histrogram -> triangular)")
+  )
+)
+
+(defn ex-5-5-2
+  []
+  (let [sorted-series (->> (iio/read-dataset "data/mystery2.dat")
+                    (i/$ 0)
+                    (sort)
+               )
+        rate (/ 1.0 (s/mean sorted-series))
+       ]
+       (-> (c/histogram  sorted-series
+                        :nbins 20         
+                        :density true 
+                        :title "mystery2"
+           )
+           (i/view)
+       ) 
+       (-> (c/function-plot (create-cdf-f sorted-series) 0 350
+                  :x-label "values"
+                  :y-label "cdf"
+                  :title "mystery2: exp-distribution"
+                  :series-label "cdf-data"
+                  :legend true
+           )
+           (c/add-function #(s/cdf-exp % :rate rate) 0 350
+                     :series-label (str "cdf-exp with rate= " rate))
+           (i/view)
+       ) 
+       (println "mystery2: exponential distribution")
+  )
+)
+
+
+(defn ex-5-5-3
+  []
+  (let [sorted-series (->> (iio/read-dataset "data/mystery3.dat")
+                    (i/$ 0)
+                    (sort)
+               )
+        x (sort (s/sample-normal (count sorted-series) :mean 0 :sd 1.0))
+        series-mean (s/mean sorted-series)
+        series-sd   (s/sd sorted-series)
+       ]
+       (-> (c/histogram  sorted-series
+                        :nbins 20         
+                        :density true 
+                        :title "mystery3"
+           )
+           (i/view)
+       ) 
+       (-> (c/function-plot (create-cdf-f sorted-series) -25 125
+                  :x-label "values"
+                  :y-label "cdf"
+                  :series-label "cdf-data"
+                  :legend true
+           )
+           (c/add-function #(s/cdf-normal % :mean series-mean :sd series-sd) -25 125
+                     :series-label (str "cdf-normal with mean= " series-mean " sd=" series-sd))
+           (i/view)
+       ) 
+        ;normal 
+        (let  [ series-mean (s/mean sorted-series)
+                series-sd   (s/sd sorted-series)
+              ]
+            (-> (c/xy-plot x sorted-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with normal model"
+                       :legend true)
+                (c/add-function #(+ (* series-sd %) series-mean) -4 4
+                     :series-label (str "normal model with mean= " series-mean " sd=" series-sd))
+                (i/view)
+            )
+        )
+       (println "normal model with mean= " series-mean " sd=" series-sd)
+  )
+)
+
+(defn ex-5-5-4
+  []
+  (let [sorted-series (->> (iio/read-dataset "data/mystery4.dat")
+                    (i/$ 0)
+                    (sort)
+               )
+        x (sort (s/sample-normal (count sorted-series) :mean 0 :sd 1.0))
+        series-mean (s/mean sorted-series)
+        series-sd   (s/sd sorted-series)
+       ]
+       (-> (c/histogram  sorted-series
+                        :nbins 20         
+                        :density true 
+                        :title "mystery4"
+           )
+           (i/view)
+       ) 
+       (-> (c/function-plot (create-cdf-f sorted-series) -25 125
+                  :x-label "values"
+                  :y-label "cdf"
+                  :series-label "cdf-data"
+                  :legend true
+           )
+           (c/add-function #(s/cdf-normal % :mean series-mean :sd series-sd) -100 200
+                     :series-label (str "cdf-normal with mean= " series-mean " sd=" series-sd))
+           (i/view)
+       ) 
+        ;normal 
+        (let  [ series-mean (s/mean sorted-series)
+                series-sd   (s/sd sorted-series)
+              ]
+            (-> (c/xy-plot x sorted-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with normal model"
+                       :legend true)
+                (c/add-function #(+ (* series-sd %) series-mean) -4 4
+                     :series-label (str "normal model with mean= " series-mean " sd=" series-sd))
+                (i/view)
+            )
+        )
+        ;lognormal
+        (let  [ log-series (i/log sorted-series)
+                log-series-mean (s/mean log-series)
+                log-series-sd   (s/sd log-series)
+              ]
+            (-> (c/xy-plot x log-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with lognormal model"
+                       :legend true)
+                (c/add-function #(+ (* log-series-sd %) log-series-mean) -4 4
+                     :series-label "lognormal model")
+                (i/view)
+            )
+        ) 
+       (println "lognormal model with mean= " series-mean " sd=" series-sd)
+  )
+)
+
+(defn ex-5-5-5
+  []
+  (let [sorted-series (->> (iio/read-dataset "data/mystery5.dat")
+                    (i/$ 0)
+                    (sort)
+               )
+        x (sort (s/sample-normal (count sorted-series) :mean 0 :sd 1.0))
+        series-mean (s/mean sorted-series)
+        series-sd   (s/sd sorted-series)
+        cdf-f (create-cdf-f sorted-series)
+        
+       ]
+       (-> (c/histogram  sorted-series
+                        :nbins 20         
+                        :density true 
+                        :title "mystery5"
+           )
+           (i/view)
+       ) 
+       (-> (c/function-plot cdf-f -0 125
+                  :x-label "values"
+                  :y-label "cdf"
+                  :series-label "cdf-data"
+                  :legend true
+           )
+           (i/view)
+       ) 
+       (-> (c/function-plot #(- 1.0 (cdf-f %)) -0 125
+                  :x-label "values"
+                  :y-label "cdf"
+                  :series-label "ccdf-data"
+                  :legend true
+           )
+           (c/set-axis :x (c/log-axis :label "Log x"))
+           (c/set-axis :y (c/log-axis :label "Log ccdf"))
+           (i/view)
+       ) 
+       ;normal 
+       (let  [ series-mean (s/mean sorted-series)
+                series-sd   (s/sd sorted-series)
+              ]
+            (-> (c/xy-plot x sorted-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with normal model"
+                       :legend true)
+                (c/add-function #(+ (* series-sd %) series-mean) -4 4
+                     :series-label (str "normal model with mean= " series-mean " sd=" series-sd))
+                (i/view)
+            )
+        )
+        ;lognormal
+        (let  [ log-series (i/log sorted-series)
+                log-series-mean (s/mean log-series)
+                log-series-sd   (s/sd log-series)
+              ]
+            (-> (c/xy-plot x log-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with lognormal model"
+                       :legend true)
+                (c/add-function #(+ (* log-series-sd %) log-series-mean) -4 4
+                     :series-label "lognormal model")
+                (i/view)
+            )
+        ) 
+       (println "pareto distribution (from loglog of ccdf)")
+  )
+)
+
+(defn ex-5-5-6
+  []
+  (let [sorted-series (->> (iio/read-dataset "data/mystery6.dat")
+                    (i/$ 0)
+                    (sort)
+               )
+        x (sort (s/sample-normal (count sorted-series) :mean 0 :sd 1.0))
+        series-mean (s/mean sorted-series)
+        series-sd   (s/sd sorted-series)
+        cdf-f (create-cdf-f sorted-series)
+        
+       ]
+       (-> (c/histogram  sorted-series
+                        :nbins 20         
+                        :density true 
+                        :title "mystery6"
+           )
+           (i/view)
+       ) 
+       (-> (c/function-plot (create-cdf-f sorted-series) -25 125
+                  :x-label "values"
+                  :y-label "cdf"
+                  :series-label "cdf-data"
+                  :legend true
+           )
+           (c/add-function #(s/cdf-normal % :mean series-mean :sd series-sd) -25 125
+                     :series-label (str "cdf-normal with mean= " series-mean " sd=" series-sd))
+           (i/view)
+       )
+       (let [f #(- (i/log (- 1.0  (cdf-f %))
+                   )
+                )
+             f2 #(- (i/log (- 1.0 (s/cdf-normal % :mean series-mean :sd series-sd))
+                    )
+                 )
+            ]
+            (-> (c/function-plot f  40 70
+                           :series-label "data"
+                           :legend true
+                           :title "log ccdfs")
+                (c/add-function f2 40 70
+                       :series-label "normal")
+                (c/set-axis :x (c/log-axis :label "Log x"))
+                (c/set-axis :y (c/log-axis :label "Log log ccdf"))
+                (i/view)
+             )
+       )
+       ;normal 
+       (let  [ series-mean (s/mean sorted-series)
+                series-sd   (s/sd sorted-series)
+              ]
+            (-> (c/xy-plot x sorted-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with normal model"
+                       :legend true)
+                (c/add-function #(+ (* series-sd %) series-mean) -4 4
+                     :series-label (str "normal model with mean= " series-mean " sd=" series-sd))
+                (i/view)
+            )
+        )
+        ;lognormal
+        (let  [ log-series (i/log sorted-series)
+                log-series-mean (s/mean log-series)
+                log-series-sd   (s/sd log-series)
+              ]
+            (-> (c/xy-plot x log-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with lognormal model"
+                       :legend true)
+                (c/add-function #(+ (* log-series-sd %) log-series-mean) -4 4
+                     :series-label "lognormal model")
+                (i/view)
+            )
+        ) 
+       (println "not quite the normal distribution (cheated: weibull)")
+  )
+)
+
+(defn ex-5-5-7
+  []
+  (let [sorted-series (->> (iio/read-dataset "data/mystery7.dat")
+                    (i/$ 0)
+                    (sort)
+               )
+        x (sort (s/sample-normal (count sorted-series) :mean 0 :sd 1.0))
+        series-mean (s/mean sorted-series)
+        series-sd   (s/sd sorted-series)
+        cdf-f (create-cdf-f sorted-series)
+        
+       ]
+       (-> (c/histogram  sorted-series
+                        :nbins 20         
+                        :density true 
+                        :title "mystery6"
+           )
+           (i/view)
+       ) 
+       (-> (c/function-plot (create-cdf-f sorted-series) -25 125
+                  :x-label "values"
+                  :y-label "cdf"
+                  :series-label "cdf-data"
+                  :legend true
+           )
+           (c/add-function #(s/cdf-normal % :mean series-mean :sd series-sd) -25 125
+                     :series-label (str "cdf-normal with mean= " series-mean " sd=" series-sd))
+           (i/view)
+       )
+       ;normal 
+       (let  [ series-mean (s/mean sorted-series)
+                series-sd   (s/sd sorted-series)
+              ]
+            (-> (c/xy-plot x sorted-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with normal model"
+                       :legend true)
+                (c/add-function #(+ (* series-sd %) series-mean) -4 4
+                     :series-label (str "normal model with mean= " series-mean " sd=" series-sd))
+                (i/view)
+            )
+        )
+        ;lognormal
+        (let  [ log-series (i/log sorted-series)
+                log-series-mean (s/mean log-series)
+                log-series-sd   (s/sd log-series)
+              ]
+            (-> (c/xy-plot x log-series
+                       :x-label "standard normal sample"
+                       :y-label "sample sizes"
+                       :series-label "data"
+                       :title "comparison with lognormal model"
+                       :legend true)
+                (c/add-function #(+ (* log-series-sd %) log-series-mean) -4 4
+                     :series-label "lognormal model")
+                (i/view)
+            )
+        ) 
+       (println "(cheated: gumbel)")
+  )
+)

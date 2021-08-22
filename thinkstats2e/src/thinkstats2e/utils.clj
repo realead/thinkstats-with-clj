@@ -2,6 +2,9 @@
 
 )
 
+(defn my_pow [x n]
+  (reduce * (repeat n x)))
+
 ;;;; pmf-functionality
 
 (defn normalize-frequencies

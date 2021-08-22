@@ -8,7 +8,7 @@ The pdf of the book can be downloaded here: https://greenteapress.com/wp/think-s
 
 ### Dependencies
    
-   * Cojure
+   * Clojure
    * leiningen (https://leiningen.org/)
    * some data sets need to be downloaded
 

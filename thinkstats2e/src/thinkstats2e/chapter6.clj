@@ -11,8 +11,67 @@
 
 ;; 6.1
 
-(defn dummy
+
+
+(defn pmf-from-normal
+  [mu sd]
+  (let [d (* 6 sd 0.01)
+        xs (for [x (range -50 51)] (+ mu (* d x)))      
+        ys (map #(s/pdf-normal % :mean mu :sd sd) xs)
+       ]
+       (normalize-frequencies (zipmap xs ys))
+  )
+)
+
+(defn calc-norm-density
   []
-  (println "I'm dummy")
+  (let [mu  163.0
+        var  52.8
+        s   (i/sqrt var)
+        my-pmf (pmf-from-normal mu s)]
+    (println (s/pdf-normal (+ mu s) :mean mu :sd s))
+    (-> (c/function-plot #(s/pdf-normal % :mean mu :sd s) 
+                          (- mu (* 4 s)) 
+                          (+ mu (* 4 s))
+           :x-label "x"
+           :y-label "pdf"
+           :series-label "normal"
+           :legend true)
+        (i/view)
+    )
+    (-> (c/bar-chart (keys my-pmf) (vals my-pmf) 
+                        :title "pmf"
+                        :x-label "x"
+                        :y-label "pmf"
+                        :legend true
+                        :series-label "pmf of normal")
+        (i/view)
+    )
+  )
+)
+
+;; 6.2
+
+;; 6.7
+
+(defn raw-moment 
+  [vs k]
+  (let [s (apply + (map #(my_pow % k) vs))]
+      (/ s (double (count vs)))
+  )
+)
+
+
+(defn central-moment 
+  [vs k]
+  (let [xbar (raw-moment vs 1)]
+       
+       (raw-moment (map #(- % xbar) vs) k)
+  )
+)
+
+(defn example-central-moment
+  []
+  (central-moment [1 2 3] 2) 
 )
 

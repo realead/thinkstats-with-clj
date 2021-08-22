@@ -126,7 +126,8 @@
 
 (def ch6-descr
      {:no-data [
-                  ch6/dummy
+;;                  ch6/calc-norm-density
+                   ch6/example-central-moment
                ]
      :with-data [
                ]

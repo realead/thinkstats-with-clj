@@ -127,11 +127,13 @@
 (def ch6-descr
      {:no-data [
 ;;                  ch6/calc-norm-density
-                   ch6/example-central-moment
+;;                  ch6/example-central-moment
+                    ch6/example-skewness
                ]
      :with-data [
+                    ch6/show-data
                ]
-     :data-loader #(load-clean-dataset :FemPreg2002)
+     :data-loader #(read-income)
      }
 )
 

@@ -75,3 +75,29 @@
   (central-moment [1 2 3] 2) 
 )
 
+(defn standard-moment 
+  [vs k]
+  (let [sigma2 (central-moment vs 2)
+        moment (central-moment vs k)]
+       
+       (/ moment (my_pow (Math/sqrt sigma2) k))
+  )
+)
+
+(defn skewness 
+  [vs]
+  (standard-moment vs 3)
+)
+
+
+(defn example-skewness
+  []
+  (skewness [1 2 3]) 
+)
+
+
+(defn show-data
+  [data]
+  data
+)
+

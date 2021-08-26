@@ -191,3 +191,11 @@
    )
 )
 
+
+(defn read-income
+   []
+   (->> (iio/read-dataset "data/hinc06.csv")
+        (i/$ (range 10 51) [1, 2] )
+   )
+)
+

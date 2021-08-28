@@ -6,6 +6,7 @@
             [thinkstats2e.chapter4 :as ch4]
             [thinkstats2e.chapter5 :as ch5]
             [thinkstats2e.chapter6 :as ch6]
+            [thinkstats2e.chapter7 :as ch7]
   )
   (:gen-class)
 )
@@ -138,6 +139,18 @@
 )
 
 
+(def ch7-descr
+     {:no-data [
+                    ch7/dummy
+               ]
+     :with-data [
+;;                   ch6/ex-6-1
+               ]
+     :data-loader #(read-income)
+     }
+)
+
+
 (def tasks { 
            :ch1 ch1-descr
            :ch2 ch2-descr
@@ -145,6 +158,7 @@
            :ch4 ch4-descr
            :ch5 ch5-descr
            :ch6 ch6-descr
+           :ch7 ch7-descr
            }
 )
 

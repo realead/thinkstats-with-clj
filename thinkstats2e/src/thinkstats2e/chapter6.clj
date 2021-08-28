@@ -96,8 +96,77 @@
 )
 
 
-(defn show-data
+;; 6-1
+
+(defn w-mean
+  [vals freqs]
+  (let [n (reduce + freqs)
+        s (reduce + (map * vals freqs))
+       ]
+       (/ s (double n))  
+  )
+)
+
+
+(defn w-median
+  ([vals freqs]
+    (w-median vals freqs (/ (reduce + freqs) 2))
+  )
+  ([vals freqs n]
+      (if (> n (first freqs))
+          (recur (rest vals) (rest freqs) (- n (first freqs))) 
+          (first vals)    
+      )
+  )
+)
+
+(defn w-raw-moment
+  [vals freqs k]
+  (let [n (reduce + freqs)
+        s (reduce + (map * (map #(my_pow % k) vals) freqs))
+       ]
+       (/ s (double n))  
+  )
+)
+
+(defn w-central-moment 
+  [vals freqs k]
+  (let [xbar (w-mean vals freqs)]       
+       (w-raw-moment (map #(- % xbar) vals) freqs k)
+  )
+)
+
+(defn w-standard-moment 
+  [vals freqs k]
+  (let [sigma2 (w-central-moment vals freqs 2)
+        moment (w-central-moment vals freqs k)]
+       
+       (/ moment (my_pow (Math/sqrt sigma2) k))
+  )
+)
+
+(defn w-skewness 
+  [vals freqs]
+  (w-standard-moment vals freqs 3)
+)
+
+(defn w-pearson-skewness 
+  [vals freqs]
+  (let [sigma (Math/sqrt (w-central-moment vals freqs 2))
+        mean  (w-mean vals freqs)
+        median (w-median vals freqs)
+        nom (* 3 (- mean median))]      
+       (/ nom sigma)
+  )
+)
+
+
+(defn ex-6-1
   [data]
-  data
+  (let [freqs (i/$ :col1 data)
+        vals  (i/$ :col2 data)
+       ]
+       {:mean (w-mean vals freqs) :median (w-median vals freqs) :skewness (w-skewness vals freqs) :pearson-skewness (w-pearson-skewness vals freqs)}
+  )
 )
 

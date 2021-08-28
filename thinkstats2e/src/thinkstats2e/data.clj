@@ -194,8 +194,14 @@
 
 (defn read-income
    []
-   (->> (iio/read-dataset "data/hinc06.csv")
-        (i/$ (range 10 51) [1, 2] )
+   (let [data (->> (iio/read-dataset "data/hinc06.csv")
+                   (i/$ (range 9 51) [1, 2] )
+              )
+        ]
+        (-> data
+            (i/transform-col :col1 #(Integer/parseInt (clojure.string/replace % "," "")))
+            (i/transform-col :col2 #(Integer/parseInt (clojure.string/replace % "," "")))
+        )
    )
 )
 

@@ -126,12 +126,12 @@
 
 (def ch6-descr
      {:no-data [
-;;                  ch6/calc-norm-density
-;;                  ch6/example-central-moment
+                    ch6/calc-norm-density
+                    ch6/example-central-moment
                     ch6/example-skewness
                ]
      :with-data [
-                    ch6/show-data
+                    ch6/ex-6-1
                ]
      :data-loader #(read-income)
      }
